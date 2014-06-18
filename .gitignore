@@ -1,0 +1,4 @@
+*pyc
+.Trash-1000/
+django_project/core/settings/secret.py
+

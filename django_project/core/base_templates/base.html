@@ -1,0 +1,36 @@
+{% load compressed %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{% block title%} Movie Recommendations {% endblock title%}</title>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {% compressed_css 'contrib' %}
+    {% block style %}{% endblock style %}
+</head>
+
+<body>
+<nav class="navbar navbar-fixed-top navbar-inverse" role="navigation">
+    <a class="navbar-brand" href="/" style="font-weight:bold;font-size:20px;">Movie Recommendations</a>
+    <div class="col-lg-2 pull-right" id="search-div">
+    <div class="input-group">
+          <input type="text" class="form-control" placeholder="Search">
+          <span class="input-group-btn">
+            <a href="/customadmin/users/hdfhf" class="btn btn-default" id="search-btn" type="button">Go!</a>
+          </span>
+    </div><!-- /input-group -->
+</div><!-- /.col-lg-2 -->
+</nav>
+
+{% block content %}
+
+{% endblock content %}
+
+{% compressed_js 'contrib' %}
+
+{% block extra_js %}
+{% endblock extra_js %}
+</body>
+</html>

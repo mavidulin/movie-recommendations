@@ -1,0 +1,265 @@
+{% extends "base.html" %}
+
+{% block style %}
+<link rel="stylesheet" type="text/css" href="/static/css/jRating.jquery.css" media="screen" />
+
+<style type="text/css">
+#movieList {
+    position:relative;
+    border:1px solid #E3E3E3;
+    width:500px;
+    left: 450px;
+    top:100px;
+}
+#recomList {
+    position:absolute;
+    width:350px;
+    height:500px;
+    top:120px;
+    left:50px
+}
+#search-div {
+    top:10px
+}
+.well {
+    position: relative;
+    margin-bottom: 0px;
+    padding: 1px;
+    height: 50px;
+    border-radius: 0px;
+}
+.wellContent {
+    position: absolute;
+    background-color: #F5F5F5;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 15px;
+    border:1px solid #E3E3E3;
+    width:498px;
+}
+.wellContent2 {
+    position: absolute;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 5px;
+    font-size: 12px;
+}
+.well2 {
+    height:30px;
+}
+.smaller {
+    font-size: 13px;
+}
+.current {
+    position: absolute;
+}
+.year {
+    font-style: italic;
+}
+.starDiv {
+    position:absolute;
+    top:90px;
+    left:550px;
+}
+.yourRating {
+    position: absolute;
+    font-size:12px;
+    font-style:italic;
+    top:92px;
+    left:680px;
+}
+</style>
+{% endblock style %}
+
+{% block content %}
+
+<div style="position:absolute;top:90px;left:835px;">
+    <a href="/">Go back to full list</a>
+</div>
+
+<p class="yourRating"></p>
+{% if existing_rating %}
+    <div style="position:absolute;top:90px;left:450px">Change rating:</div>
+{% else %}
+    <div style="position:absolute;top:90px;left:450px">Your rating:</div>
+{% endif %}
+<div class="starDiv"></div>
+
+<div id="movieList">
+    <div class="wellContent">
+    </div>
+</div>
+
+{% if recommendations %}
+<div style="position:absolute;top:90px;left:53px;font-weight:bold;font-style:italic">See also:</div>
+<div id="recomList">
+</div>
+{% endif %}
+
+{% endblock content %}
+
+{% block extra_js %}
+
+<script src="/static/js/jRating.jquery.min.js"></script>
+
+<script type="text/javascript">
+
+$(".starDiv").jRating({
+      step:true,
+      length : 5, // nb of stars
+      rateMax: 5,
+      decimalLength:0, // number of decimal in the rate
+      bigStarsPath: '/static/css/jquery/icons/stars.png',
+      sendRequest: false,
+      showRateInfo: false,
+      canRateAgain: true,
+      onClick: function(element, rate) {
+        // send ajax
+        $.ajax({
+            url: '/rating/'+rate+'/'+{{movie.id}},
+            success: function (response) {
+                console.log('good')
+                $('p.yourRating').empty();
+                $('p.yourRating').append('(Your rating: '+rate+')');
+            },
+            error: function(response) {
+            }
+
+        });
+console.log(rate)
+      }
+});
+
+//=================Search functionality================================
+$('#search-btn').on('click', doSearch);
+
+function doSearch(evt) {
+    evt.preventDefault();
+    search_string = $('#search-div').find('input').val();
+
+    letters = /^[A-Za-z\s]+$/;
+    if (search_string.length>0 && search_string.match(letters)) {
+        window.location = '/search/'+search_string;
+    }
+}
+
+//=================END Search functionality=============================
+
+forbidden_list = [", The", ", A", ", An", ", Le", ", Der", ", L'", ", La", ", Les", ", Il"]
+
+// get movie detail from api
+    name = "{{movie.name}}"
+    original_name = name
+    // check if name end with The, La, Les, Il
+    for (letter in forbidden_list) {
+        index_of = name.indexOf(forbidden_list[letter])
+
+        if (index_of!=-1) {
+            name = name.substring(0,index_of)
+            break;
+        }
+    }
+
+    $.ajax({
+        url: 'http://www.omdbapi.com/?t='+name,
+        type: 'GET',
+        dataType: "json",
+        success: function(response) {
+            if (response.Response=="False") {
+                $('.wellContent').append(
+                    '<a href="/detail/{{movie.id}}" style="font-weight:bold;">'+original_name+'</a>'
+                );
+            }
+            else {
+                title = response.Title
+                year = response.Year
+                genre = response.Genre
+                runtime = response.Runtime
+                actors = response.Actors
+                director = response.Director
+                writer = response.Writer
+                released = response.Released
+                plot = response.Plot
+                $('.wellContent').append(
+                            '<a href="/detail/{{movie.id}}" style="font-weight:bold;">'+title+'</a>'+
+                            '<span class="smaller year"> &nbsp;&nbsp;('+year+')</span></br>' +
+                            '<p class="smaller">'+genre+'</p>'+
+                            '<p class="smaller">' +
+                                '<span style="font-weight:bold">runtime: </span>'+runtime +
+                            '</p>'+
+                            '<p class="smaller">' +
+                                '<span style="font-weight:bold">actors: </span>'+actors +
+                            '</p>'+
+                            '<p class="smaller">' +
+                                '<span style="font-weight:bold">director: </span>'+director +
+                            '</p>'+
+                            '<p class="smaller">' +
+                                '<span style="font-weight:bold">writer: </span>'+writer +
+                            '</p>'+
+                            '<p class="smaller">' +
+                                '<span style="font-weight:bold">released: </span>'+released +
+                            '</p>'+
+                            '<p class="smaller">' +
+                                '<span style="font-weight:bold">Plot: </span></br>'+plot +
+                            '</p>'
+                );
+            }
+        },
+        error: function(response) {
+        }
+    })
+
+
+{% if recommendations %}
+// get movie detail from api
+{% for recommendation in recommendations %}
+    recom_name = "{{recommendation.name}}"
+    original_recom_name = recom_name
+    // check if name end with The, La, Les, Il...
+    for (letter in forbidden_list) {
+        index_of = recom_name.indexOf(forbidden_list[letter])
+
+        if (index_of!=-1) {
+            recom_name = recom_name.substring(0,index_of)
+            break;
+        }
+    }
+
+    $.ajax({
+        url: 'http://www.omdbapi.com/?t='+recom_name,
+        type: 'GET',
+        dataType: "json",
+        success: function(response) {
+            if (response.Response=="False") {
+                $('#recomList').append(
+                    '<div class="well well2">'+
+                        '<div class="wellContent2">' +
+                            '<a href="/detail/{{recommendation.id}}" style="font-weight:bold;">'+original_recom_name+'</a>'+
+                        '</div>'+
+                    '</div>'
+                );
+            }
+            else {
+                title = response.Title
+                $('#recomList').append(
+                    '<div class="well well2">' +
+                        '<div class="wellContent2">' +
+                        '<a href="/detail/{{recommendation.id}}" style="font-weight:bold;">'+title+'</a>'+
+                    '</div>'+
+                    '</div>'
+                );
+            }
+        },
+        error: function(response) {
+        }
+    })
+{% endfor %}
+{% endif %}
+
+{% if existing_rating %}
+    $('p.yourRating').append('(Your rating: {{existing_rating}})');
+{% endif %}
+
+</script>
+
+{% endblock extra_js %}

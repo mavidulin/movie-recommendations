@@ -1,0 +1,132 @@
+Korisnik: 224
+
+Broj ocjenjenih filmova: 141
+Broj pogodaka ocjena: 36
+Postotak pogodaka: 25.53
+RMS: 1.434
+
+
+Korisnik: 303
+
+Broj ocjenjenih filmova: 484
+Broj pogodaka ocjena: 141
+Postotak pogodaka: 29.13
+RMS: 1.444
+
+
+Korisnik: 122
+
+Broj ocjenjenih filmova: 61
+Broj pogodaka ocjena: 23
+Postotak pogodaka: 37.70
+RMS: 0.950
+
+
+Korisnik: 194
+
+Broj ocjenjenih filmova: 305
+Broj pogodaka ocjena: 103
+Postotak pogodaka: 33.77
+RMS: 1.186
+
+
+Korisnik: 291
+
+Broj ocjenjenih filmova: 296
+Broj pogodaka ocjena: 87
+Postotak pogodaka: 29.39
+RMS: 1.432
+
+
+Korisnik: 287
+
+Broj ocjenjenih filmova: 62
+Broj pogodaka ocjena: 12
+Postotak pogodaka: 19.35
+RMS: 2.992
+
+
+Korisnik: 246
+
+Broj ocjenjenih filmova: 195
+Broj pogodaka ocjena: 53
+Postotak pogodaka: 27.18
+RMS: 1.412
+
+
+Korisnik: 242
+
+Broj ocjenjenih filmova: 20
+Broj pogodaka ocjena: 10
+Postotak pogodaka: 50.00
+RMS: 1.597
+
+
+Korisnik: 249
+
+Broj ocjenjenih filmova: 161
+Broj pogodaka ocjena: 66
+Postotak pogodaka: 40.99
+RMS: 1.385
+
+
+Korisnik: 99
+
+Broj ocjenjenih filmova: 136
+Broj pogodaka ocjena: 47
+Postotak pogodaka: 34.56
+RMS: 1.315
+
+
+Korisnik: 178
+
+Broj ocjenjenih filmova: 273
+Broj pogodaka ocjena: 101
+Postotak pogodaka: 37.00
+RMS: 1.200
+
+
+Korisnik: 251
+
+Broj ocjenjenih filmova: 77
+Broj pogodaka ocjena: 20
+Postotak pogodaka: 25.97
+RMS: 1.222
+
+
+Korisnik: 81
+
+Broj ocjenjenih filmova: 58
+Broj pogodaka ocjena: 17
+Postotak pogodaka: 29.31
+RMS: 1.352
+
+
+Korisnik: 260
+
+Broj ocjenjenih filmova: 24
+Broj pogodaka ocjena: 6
+Postotak pogodaka: 25.00
+RMS: 1.555
+
+
+Korisnik: 196
+
+Broj ocjenjenih filmova: 39
+Broj pogodaka ocjena: 11
+Postotak pogodaka: 28.21
+RMS: 1.359
+
+
+Korisnik: 186
+
+Broj ocjenjenih filmova: 92
+Broj pogodaka ocjena: 26
+Postotak pogodaka: 28.26
+RMS: 1.507
+
+
+** Skup za testiranje: 2424 (2.42%) **
+
+Ukupni RMS: 1.459
+POSTOTAK TOCNOSTI ALGORITMA: 31.31

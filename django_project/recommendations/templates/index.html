@@ -1,0 +1,220 @@
+{% extends "base.html" %}
+
+{% block style %}
+<style type="text/css">
+#movieList {
+    position:relative;
+    border:1px solid #E3E3E3;
+    width:500px;
+    left: 450px;
+    top:100px;
+}
+#recomList {
+    position:absolute;
+    width:350px;
+    height:500px;
+    top:120px;
+    left:50px
+}
+#search-div {
+    top:10px
+}
+.well {
+    position: relative;
+    margin-bottom: 0px;
+    padding: 1px;
+    height: 50px;
+    border-radius: 0px;
+}
+#paginationDiv {
+    position: relative;
+    top:100px;
+    left: 455px;
+}
+.wellContent {
+    position: absolute;
+    left:15px;
+}
+.wellContent2 {
+    position: absolute;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 5px;
+    font-size: 12px;
+}
+.well2 {
+    height:30px;
+}
+.smaller {
+    font-size: 13px;
+}
+.current {
+    position: absolute;
+}
+.year {
+    font-style: italic;
+}
+</style>
+{% endblock style %}
+
+{% block content %}
+
+{% if search_check %}
+    <div style="position:absolute;top:80px;left:450px;">
+        <a href="/">Go back to full list</a>
+    </div>
+{% endif %}
+<div id="movieList">
+</div>
+
+{% if recommendations %}
+<div style="position:absolute;top:90px;left:53px;font-weight:bold;font-style:italic">See also:</div>
+<div id="recomList">
+</div>
+{% endif %}
+
+{% if is_paginated %}
+    <div id="paginationDiv">
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        <ul class="pagination">
+        </ul>
+    </div>
+{% endif %}
+
+
+{% endblock content %}
+
+{% block extra_js %}
+
+<script type="text/javascript">
+
+//=================Pagination functionality===========================
+
+number_of_pages_in_set = 9 // define number of pages to be in one set
+number_of_pages = {{ page_obj.paginator.num_pages }}
+current_page_number = {{ page_obj.number }}
+
+//=================End Pagination functionality========================
+
+//=================Search functionality================================
+$('#search-btn').on('click', doSearch);
+
+function doSearch(evt) {
+    evt.preventDefault();
+    search_string = $('#search-div').find('input').val();
+
+    letters = /^[A-Za-z\s]+$/;
+    if (search_string.length>0 && search_string.match(letters)) {
+        window.location = '/search/'+search_string;
+    }
+}
+
+//=================END Search functionality=============================
+
+forbidden_list = [", The", ", A", ", An", ", Le", ", Der", ", L'", ", La", ", Les", ", Il"]
+{% if movie_list %}
+// get movie detail from api
+{% for movie in movie_list %}
+    name = "{{movie.name}}"
+    // check if name end with The, La, Les, Il
+    for (letter in forbidden_list) {
+        index_of = name.indexOf(forbidden_list[letter])
+
+        if (index_of!=-1) {
+            name = name.substring(0,index_of)
+            break;
+        }
+    }
+
+    $.ajax({
+        url: 'http://www.omdbapi.com/?t='+name,
+        type: 'GET',
+        dataType: "json",
+        success: function(response) {
+            if (response.Response=="False") {
+                $('#movieList').append(
+                    '<div class="well">'+
+                        '<div class="wellContent">' +
+                            '<a href="/detail/{{movie.id}}" style="font-weight:bold;">'+name+'</a>'+
+                        '</div>'+
+                    '</div>'
+                );
+            }
+            else {
+                title = response.Title
+                year = response.Year
+                genre = response.Genre
+                $('#movieList').append(
+                    '<div class="well">' +
+                        '<div class="wellContent">' +
+                        '<a href="/detail/{{movie.id}}" style="font-weight:bold;">'+title+'</a>'+
+                        '<span class="smaller year"> &nbsp;&nbsp;('+year+')</span></br>' +
+                        '<p class="smaller">'+genre+'</p>'+
+                    '</div>'+
+                    '</div>'
+                );
+            }
+        },
+        error: function(response) {
+        }
+    })
+
+{% endfor %}
+{% else %}
+$('#movieList').append('<p style="font-weight:bold;font-size:16px;">Sorry, no matches found.</p>')
+{% endif %}
+
+{% if recommendations %}
+// get movie detail from api
+{% for recommendation in recommendations %}
+    recom_name = "{{recommendation.movie.name}}"
+    original_recom_name = recom_name
+    // check if name end with The, La, Les, Il...
+    for (letter in forbidden_list) {
+        index_of = recom_name.indexOf(forbidden_list[letter])
+
+        if (index_of!=-1) {
+            recom_name = recom_name.substring(0,index_of)
+            break;
+        }
+    }
+
+    $.ajax({
+        url: 'http://www.omdbapi.com/?t='+recom_name,
+        type: 'GET',
+        dataType: "json",
+        success: function(response) {
+            if (response.Response=="False") {
+                $('#recomList').append(
+                    '<div class="well well2">'+
+                        '<div class="wellContent2">' +
+                            '<a href="/detail/{{recommendation.movie.id}}" style="font-weight:bold;">'+original_recom_name+'</a>'+
+                        '</div>'+
+                    '</div>'
+                );
+            }
+            else {
+                title = response.Title
+                $('#recomList').append(
+                    '<div class="well well2">' +
+                        '<div class="wellContent2">' +
+                        '<a href="/detail/{{recommendation.movie.id}}" style="font-weight:bold;">'+title+'</a>'+
+                    '</div>'+
+                    '</div>'
+                );
+            }
+        },
+        error: function(response) {
+        }
+    })
+{% endfor %}
+{% endif %}
+
+</script>
+
+<script src="/static/js/mypagination.js"></script>
+
+{% endblock extra_js %}
